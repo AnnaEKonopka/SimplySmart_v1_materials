@@ -1,10 +1,3 @@
-#dopracowanie tresholdu
-#dopracowanie formatu zapisu pliku
-#na rysunkach trzeba bedzie zaznaczyc zliczenia
-#mozna popracowac nad wyswietlaniem bledow, zwlaszcza dla wprowadzanych danych, to powinno byc proste 
-
-#dziala teraz dobrze
-
 import wx
 
 class MyPanel(wx.Panel):
@@ -21,8 +14,8 @@ class MyPanel(wx.Panel):
         import shutil
         
         path_results = "Results"
-        shutil.rmtree(path_results, ignore_errors=True) #usuwa dotychczasowy folder z wynikami
-        shutil.rmtree("DNAdamage_thresholded", ignore_errors=True) #usuwa, potem na nowo tworzy pusty
+        shutil.rmtree(path_results, ignore_errors=True) 
+        shutil.rmtree("DNAdamage_thresholded", ignore_errors=True) 
         os.mkdir("Results")                             
         os.mkdir("Results/Output_images_DNAdamage")
         os.mkdir("DNAdamage_thresholded")
@@ -45,9 +38,9 @@ class MyPanel(wx.Panel):
             button2 = wx.Button(self, label='Select foci', pos=(5, 45), size=(110, 25))
             button2.Bind(wx.EVT_BUTTON, self.on_button2)
         else:
-            print("Error") #to zdaje sie tylko fla mnie, pewnie mozna to po prostu usunac
+            print("Error") 
         
-    def on_button2(self, event): # wybor kanalu DNA damage
+    def on_button2(self, event): 
         
         import os
         
@@ -127,7 +120,7 @@ class MyPanel(wx.Panel):
         for file in glob.glob(self.relative_corrected_MARKER): 
             
             list_file.append(file)
-            sorted_list_file = sorted(list_file) #sortuje pliki po numerze w nazwie, uwaga numer musi miec tyle samo cyfr t.j. 001
+            sorted_list_file = sorted(list_file) 
             
         for s_file in sorted_list_file:
             
@@ -145,10 +138,10 @@ class MyPanel(wx.Panel):
 
                 area_pixel = values[i, cv2.CC_STAT_AREA]               
                 
-                if area_pixel > float(self.input_min_marker) and area_pixel < float(self.input_max_marker):  #kolejne zmienne 
+                if area_pixel > float(self.input_min_marker) and area_pixel < float(self.input_max_marker):  
                     name1 += 1 
                     
-                    componentMask = (label_ids == i).astype("uint8") * 255 #zeby informowal jesli nic nie znajdzie
+                    componentMask = (label_ids == i).astype("uint8") * 255 
                     
                     cv2.imshow("Nucleus", componentMask)
                     cv2.waitKey(200)
@@ -211,7 +204,7 @@ class MyPanel(wx.Panel):
                 
         threshold = float(self.input_threshold)
             
-        for s_file in sorted_list_file: # zczytuje obrazki, robi treshold i zapisuje w nowym folderze 
+        for s_file in sorted_list_file: 
             
             read_file_DNAdamage = cv2.imread(s_file, 0)  
                                   
@@ -238,45 +231,27 @@ class MyPanel(wx.Panel):
                 read_file_DNAdamage = cv2.imread(paths_DNAdamage_tresholded[image], 0) 
                 
                 masked_img = cv2.bitwise_and(read_file_DNAdamage, read_file_DNAdamage, mask = index) 
-                
-                #masked_img_inverted = np.invert(masked_img)
-                                                                     
+                                                                             
                 (totalLabelsMasked, label_idsMasked, valuesMasked, centroidMasked) = cv2.connectedComponentsWithStats(masked_img, connectivity=8, ltype=2)  
-                
-                #label_hue = np.uint8(179*label_idsMasked/np.max(label_idsMasked)) #DZIALA, doczytac o co w tym chodzi
-                #blank_ch = 255*np.ones_like(label_hue)
-                #labeled_img = cv2.merge([label_hue, blank_ch, blank_ch])
-                
-                #labeled_img = cv2.cvtColor(labeled_img, cv2.COLOR_HSV2BGR)
-                
-                #labeled_img[label_hue==0] = 0
-                                             
-                        
-                #cv2.imshow("DNA damage foci", labeled_img)
-                #cv2.waitKey(200)
-                #cv2.destroyAllWindows()
-                
-                #cv2.imwrite(f"Results/Output_images_DNAdamage/DNA_damage_{name}.jpg", labeled_img) #tworzy nowy folder z wynikami i zapisuje tam masked im
-                number_foci = totalLabelsMasked - 1 #minus 1 poniewaz, odejmowane jest tlo, ktore jest zliczane
+                                                           
+                number_foci = totalLabelsMasked - 1 
                 
                 
                 area_foci = []
                     
-                for i in range(1, totalLabelsMasked): #mozna jakos jeszcze zdobyc te obrazki ktore sa po filrze, pewnie jakas kolejna maska
+                for i in range(1, totalLabelsMasked): 
                     
                     area = valuesMasked[i, cv2.CC_STAT_AREA]  
                         
-                    if area >= float(self.input_foci_size): #jedna zmienna
+                    if area >= float(self.input_foci_size): 
                         
-                        area_foci.append(area) #zapisuje tylko te foci ktore sa powyzej danej ilosci pixeli (nie sa szumen)
-                        
+                        area_foci.append(area) 
                     else:
                         area_foci.append(0)
-                        number_foci -= 1 #przetestowac to #musialby tu tworzyc nowa macierz wydaje mi sie
-                        masked_img[valuesMasked == i] = 0 # to nie dziala w ogole
-                        #print(masked_img)
+                        number_foci -= 1 
+                        masked_img[valuesMasked == i] = 0 
                                   
-                label_hue = np.uint8(179*label_idsMasked/np.max(label_idsMasked)) #DZIALA, doczytac o co w tym chodzi
+                label_hue = np.uint8(179*label_idsMasked/np.max(label_idsMasked)) 
                 blank_ch = 255*np.ones_like(label_hue)
                 labeled_img = cv2.merge([label_hue, blank_ch, blank_ch])
                 
@@ -288,7 +263,7 @@ class MyPanel(wx.Panel):
                 cv2.waitKey(200)
                 cv2.destroyAllWindows()
                 
-                cv2.imwrite(f"Results/Output_images_DNAdamage/DNA_damage_{name}.jpg", labeled_img) #tworzy nowy folder z wynikami i zapisuje tam masked im              
+                cv2.imwrite(f"Results/Output_images_DNAdamage/DNA_damage_{name}.jpg", labeled_img)              
                 area_sum = sum(area_foci) 
 
                 self.area_foci_list_of_nucleus.append(area_sum)
@@ -302,7 +277,7 @@ class MyPanel(wx.Panel):
         else:
             print("Error")
         
-        path_DNAdamage_thresholded = "DNAdamage_thresholded" #usuwa folder z tresh obrazkami, gdy nie jest juz potrzebny
+        path_DNAdamage_thresholded = "DNAdamage_thresholded" 
         shutil.rmtree(path_DNAdamage_thresholded, ignore_errors=True)
         
     def on_button5(self, event):
@@ -316,7 +291,7 @@ class MyPanel(wx.Panel):
         
         results = zip(self.number_foci_list_of_nucleus, self.area_foci_list_of_nucleus)
         results_df = pd.DataFrame(results, columns=["Foci Number", "Foci Total Area"])
-        results_df.to_csv(f'Results/Quantification.csv') #zapisuje w folderze results, forme zapisu dopracowac 
+        results_df.to_csv(f'Results/Quantification.csv') 
         os.rename("Results", f"{my_name_folder}")
         
         st1 = wx.StaticText(self, label = "Saved! Analysis completed!", pos=(140, 155))
