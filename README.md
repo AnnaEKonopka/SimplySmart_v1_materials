@@ -1,8 +1,11 @@
 1# SimplySmart_v1, this is actual application 
-2# SimplySmart_v1.py, this is source code
-3# Figure_2_raw_data, these are input images and output from SimplySmart_v1
-4# Figure_3_and_4_raw_data, these are input images and output from SimplySmart_v1
-5# Figure_5_raw_data, these are input images and output from SimplySmart_v1
+2# Figure_2_raw_data, these are input images and output from SimplySmart_v1
+3# Figure_3_raw_data, these are input images and output from SimplySmart_v1
+4# Figure_4_raw_data, these are input images and output from SimplySmart_v1
+5# Figure_5_and_6_raw_data, these are input images and output from SimplySmart_v1
+6# Figure_7_raw_data, these are input images and output data from tools comparison 
+7# Figure_8_raw_data, these are input images and output from SimplySmart_v1
+8# SimplySmart_v1.py, this is source code
 
 Implementation: 
 
